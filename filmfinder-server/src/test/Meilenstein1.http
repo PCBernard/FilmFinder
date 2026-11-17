@@ -1,0 +1,75 @@
+# Mit der VS-Code-Erweiterung "REST Client" ausführen (Send Request über jeder ###-Zeile)
+@host = http://localhost:3000
+
+### 1. Registrieren
+POST {{host}}/authentication/register
+Content-Type: application/json
+
+{ "email": "test@example.com", "password": "geheim1234" }
+
+### 2. Login (Token wird für die folgenden Requests gespeichert)
+# @name login
+POST {{host}}/authentication/login
+Content-Type: application/json
+
+{ "email": "test@example.com", "password": "geheim1234" }
+
+###
+@token = {{login.response.body.token}}
+
+### 3. Login mit falschem Passwort (erwartet: 401)
+POST {{host}}/authentication/login
+Content-Type: application/json
+
+{ "email": "test@example.com", "password": "falsch" }
+
+### 4. Filmsuche (TMDB)
+GET {{host}}/movies/search?q=Der Pate
+
+### 5. Profil ohne Token (erwartet: 401)
+GET {{host}}/profile
+
+### 6. Profil abrufen (leer beim ersten Mal)
+GET {{host}}/profile
+Authorization: Bearer {{token}}
+
+### 7. Lieblingsfilm hinzufügen (Der Pate = TMDB-ID 238)
+POST {{host}}/profile/movies
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "list": "favoriteMovies", "movieId": 238 }
+
+### 8. Film als "mag ich nicht" markieren (verschiebt ihn aus den anderen Bewertungen)
+POST {{host}}/profile/movies
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "list": "dislikedMovies", "movieId": 238 }
+
+### 9. Film entfernen
+DELETE {{host}}/profile/movies/dislikedMovies/238
+Authorization: Bearer {{token}}
+
+### 10. Streamingdienste, Lieblingsschauspieler und Genre-Ausschluss setzen (35 = Komödie)
+PUT {{host}}/profile/settings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "services": ["netflix", "prime"],
+  "favoritePeople": ["Robert De Niro"],
+  "dislikedGenres": [35],
+  "allowBuyOrRent": true
+}
+
+### 11. Empfehlungen: Krimi/Drama mit Robert De Niro, mindestens Rating 7
+GET {{host}}/recommendations?genres=80,18&person=Robert De Niro&minRating=7
+Authorization: Bearer {{token}}
+
+### 12. Chat (Platzhalter ohne KI: erkennt Genres und "mit <Name>")
+POST {{host}}/recommendations/chat
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "message": "Heute sind Freunde da, ich will etwas Witziges, keine Horrorfilme" }

@@ -1,0 +1,10 @@
+@tailwind base; @tailwind components; @tailwind utilities;
+body { @apply bg-paper text-ink font-body; }
+@layer components {
+  .card { @apply bg-white border-2 border-ink shadow-b; }
+  .btn { @apply inline-flex items-center gap-2 px-4 py-2 border-2 border-ink bg-ink text-white font-head font-bold text-xs uppercase shadow-bs transition-all hover:bg-yellow hover:text-ink; }
+  .btn-y { @apply btn bg-yellow text-ink hover:bg-ink hover:text-white; }
+  .chip { @apply inline-flex items-center gap-1 px-2.5 py-1 border-2 border-ink bg-sand font-head font-bold text-xs; }
+  .input { @apply w-full bg-transparent border-0 border-b-2 border-ink px-1 py-2 outline-none focus:bg-yellow/20; }
+  .h1 { @apply font-head font-bold uppercase tracking-tight text-4xl md:text-6xl; }
+}
